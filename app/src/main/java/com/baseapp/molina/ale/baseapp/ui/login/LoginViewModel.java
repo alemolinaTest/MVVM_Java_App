@@ -85,7 +85,14 @@ public class LoginViewModel extends BaseViewModel<LoginNavigator> {
         setIsLoading(true);
         getCompositeDisposable().add(getDataManager()
                 .doServerLoginApiCall(new LoginRequest.ServerLoginRequest(email, password))
+                /**
+                 * subscribeOn: Asynchronously subscribes Observers to this ObservableSource on the specified  Scheduler.*/
+               /* it will make the Observable to do its waiting and computations on a ThreadPool
+               that's dedicated for I/O (Schedulers.io()).
+                */
                 .subscribeOn(getSchedulerProvider().io())
+                /*observeOn: makes subscriber action to execute its result on Android's main thread.
+                This is needed if one wants to change anything on Android UI.*/
                 .observeOn(getSchedulerProvider().ui())
                 .subscribe(new Consumer<LoginResponse>() {
                     @Override

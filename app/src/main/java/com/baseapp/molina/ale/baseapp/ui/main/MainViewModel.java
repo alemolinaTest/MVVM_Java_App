@@ -32,10 +32,10 @@ public class MainViewModel extends BaseViewModel<MainNavigator> {
     private final ObservableArrayList<QuestionCardData> questionDataList = new ObservableArrayList<>();
 /**
  * LiveData is a data holder class that can be observed within a given lifecycle.
- * This means that an {@link Observer} can be added in a pair with a {@link LifecycleOwner}, and
+ * This means that an  Observer can be added in a pair with a LifecycleOwner, and
  * this observer will be notified about modifications of the wrapped data only if the paired
  * LifecycleOwner is in active state. LifecycleOwner is considered as active, if its state is
- * {@link Lifecycle.State#STARTED} or {@link Lifecycle.State#RESUMED}.*/
+ *  Lifecycle.State#STARTED or  Lifecycle.State#RESUMED.*/
 
     private final MutableLiveData<List<QuestionCardData>> questionCardData;
 
@@ -75,9 +75,15 @@ public class MainViewModel extends BaseViewModel<MainNavigator> {
         //AppDataManager getQuestionCardData
         getCompositeDisposable().add(getDataManager()
                 .getQuestionCardData()//returns  an Observable<List<Question>>
-                .subscribeOn(getSchedulerProvider().io())
-                .observeOn(getSchedulerProvider().ui())
+                .subscribeOn(getSchedulerProvider().io()) /**
+         * subscribeOn: Asynchronously subscribes Observers to this ObservableSource on the specified  Scheduler.*/
+                /* it will make the Observable to do its waiting and computations on a ThreadPool
+                that's dedicated for I/O (Schedulers.io()).
+                 */
+                .observeOn(getSchedulerProvider().ui()) /*observeOn: makes subscriber action to execute its result on Android's main thread.
+                This is needed if one wants to change anything on Android UI.*/
                 .subscribe(new Consumer<List<QuestionCardData>>() {
+                    // /Consumer: A functional interface (callback) that accepts a single value.
                     @Override
                     public void accept(List<QuestionCardData> questionList) throws Exception {
                         if (questionList != null) {
