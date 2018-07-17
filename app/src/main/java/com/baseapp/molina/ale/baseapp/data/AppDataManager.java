@@ -297,18 +297,31 @@ public class AppDataManager implements DataManager {
 
     @Override
     public Observable<List<QuestionCardData>> getQuestionCardData() {
-
+        //AppDBHelper getAllQuestions, returns Observable<List<Question>>
         return mDbHelper.getAllQuestions()
+        /** FlatMap
+         * Returns an Observable that emits items based on applying a function that you supply to each item emitted
+         * by the source ObservableSource, where that function returns an ObservableSource, and then merging those resulting
+         * ObservableSources and emitting the results of this merger.*/
+
+                //Function: A functional interface that takes a value and returns another value, possibly with a
+                //different type and allows throwing a checked exception.
                 .flatMap(new Function<List<Question>, ObservableSource<Question>>() {
                     @Override
                     public ObservableSource<Question> apply(List<Question> questions) throws Exception {
+                        //Converts an sequence into an ObservableSource that emits the items in the sequence
                         return Observable.fromIterable(questions);
                     }
-                })
+                })//get all the questions
+                //now for every question it gets the options by using the question.id
                 .flatMap(new Function<Question, ObservableSource<QuestionCardData>>() {
                     @Override
                     public ObservableSource<QuestionCardData> apply(Question question) throws Exception {
+                        //zip Returns an Observable that emits the results of a specified
+                        // combiner function applied to combinations of
+                        // two items emitted, in sequence, by two other ObservableSources.
                         return Observable.zip(mDbHelper.getOptionsForQuestionId(question.id), Observable.just(question),
+                                //BiFunction: A functional interface (callback) that computes a value based on multiple input values.
                                 new BiFunction<List<Option>, Question, QuestionCardData>() {
                                     @Override
                                     public QuestionCardData apply(List<Option> options, Question question) throws Exception {

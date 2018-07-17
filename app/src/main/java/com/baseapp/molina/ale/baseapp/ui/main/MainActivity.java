@@ -176,8 +176,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         setupCardContainerView();
         subscribeToLiveData();
     }
-
+    //subscribe to questionCardData LiveData, when data will be accesible, the UI will be updated
     private void subscribeToLiveData() {
+        //lifeCycleOwner is the activity
+        /**
+         * Adds the given observer to the observers list within the lifespan of the given
+         * owner. The events are dispatched on the main thread. If LiveData already has data
+         * set, it will be delivered to the observer.*/
         mMainViewModel.getQuestionCardData().observe(this, new Observer<List<QuestionCardData>>() {
             @Override
             public void onChanged(@Nullable List<QuestionCardData> questionCardDatas) {

@@ -30,6 +30,12 @@ public class MainViewModel extends BaseViewModel<MainNavigator> {
     private final ObservableField<String> userEmail = new ObservableField<>();
     private final ObservableField<String> userProfilePicUrl = new ObservableField<>();
     private final ObservableArrayList<QuestionCardData> questionDataList = new ObservableArrayList<>();
+/**
+ * LiveData is a data holder class that can be observed within a given lifecycle.
+ * This means that an {@link Observer} can be added in a pair with a {@link LifecycleOwner}, and
+ * this observer will be notified about modifications of the wrapped data only if the paired
+ * LifecycleOwner is in active state. LifecycleOwner is considered as active, if its state is
+ * {@link Lifecycle.State#STARTED} or {@link Lifecycle.State#RESUMED}.*/
 
     private final MutableLiveData<List<QuestionCardData>> questionCardData;
 
@@ -65,8 +71,10 @@ public class MainViewModel extends BaseViewModel<MainNavigator> {
     }
 
     public void loadQuestionCards() {
+        //A disposable container that can hold onto multiple other disposables
+        //AppDataManager getQuestionCardData
         getCompositeDisposable().add(getDataManager()
-                .getQuestionCardData()
+                .getQuestionCardData()//returns  an Observable<List<Question>>
                 .subscribeOn(getSchedulerProvider().io())
                 .observeOn(getSchedulerProvider().ui())
                 .subscribe(new Consumer<List<QuestionCardData>>() {
@@ -74,6 +82,7 @@ public class MainViewModel extends BaseViewModel<MainNavigator> {
                     public void accept(List<QuestionCardData> questionList) throws Exception {
                         if (questionList != null) {
                             action = ACTION_ADD_ALL;
+                            //sets the values to the MutableLiveData
                             questionCardData.setValue(questionList);
                         }
                     }

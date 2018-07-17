@@ -38,9 +38,14 @@ public class AppDbHelper implements DbHelper {
 
     @Override
     public Observable<List<Question>> getAllQuestions() {
+        /*Observable.fromCallable: Returns an Observable that, when an observer subscribes to it,
+        invokes a function you specify and then emits the value returned from that function.*/
+
         return Observable.fromCallable(new Callable<List<Question>>() {
+            //Callable: A task that returns a result and may throw an exception.
+            // Implementors define a single method with no arguments called call.
             @Override
-            public List<Question> call() throws Exception {
+            public List<Question> call() throws Exception {//getting collection of questions
                 return mAppDatabase.questionDao().loadAll();
             }
         });
